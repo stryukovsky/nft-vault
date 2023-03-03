@@ -13,12 +13,26 @@ describe("nft-vault", () => {
     const program = anchor.workspace.NftVault as Program<NftVault>;
     const mint = anchor.web3.Keypair.generate();
     const ownerPublicKey = anchor.getProvider().publicKey;
+
+    it("should initialize mint", async () => {
+        await program.methods.initializeMint().accounts({
+            mint: mint.publicKey,
+        }).signers([mint]).rpc();
+    });
+
+    it("should initialize token account", async () => {
+        const tokenAccount = await getAssociatedTokenAddress(mint.publicKey, ownerPublicKey);
+        await program.methods.initializeAccount().accounts({
+            mint: mint.publicKey,
+            tokenAccount,
+        }).rpc();
+    });
     
     it("should mint token", async () => {
-        const tokenAccountPublicKey = await getAssociatedTokenAddress(mint.publicKey, ownerPublicKey);
+        const tokenAccount = await getAssociatedTokenAddress(mint.publicKey, ownerPublicKey);
         await program.methods.mintNft(new anchor.BN(123)).accounts({
             mint: mint.publicKey,
-            tokenAccount: tokenAccountPublicKey,
-        }).signers([mint]).rpc();
+            tokenAccount,
+        }).rpc();
     });
 });

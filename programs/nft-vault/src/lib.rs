@@ -20,7 +20,7 @@ pub mod nft_vault {
         let accounts = MintTo {
             mint: ctx.accounts.mint.to_account_info(),
             to: ctx.accounts.token_account.to_account_info(),
-            authority: ctx.accounts.mint.to_account_info(),
+            authority: ctx.accounts.payer.to_account_info(),
         };
         let context = CpiContext::new(token_program, accounts);
         mint_to(context, token_id)
@@ -31,10 +31,8 @@ pub mod nft_vault {
 pub struct MintNft<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-
     #[account(mut)]
     pub mint: Account<'info, Mint>,
-
     #[account(mut)]
     pub token_account: Account<'info, TokenAccount>,
 
@@ -66,7 +64,7 @@ pub struct InitializeMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    #[account(init, payer = payer, mint::authority = mint, mint::decimals = 0)]
+    #[account(init, payer = payer, mint::authority = payer, mint::decimals = 0)]
     pub mint: Account<'info, Mint>,
 
     pub system_program: Program<'info, System>,

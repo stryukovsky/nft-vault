@@ -7,11 +7,11 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 pub mod nft_vault {
     use super::*;
 
-    pub fn initialize_account(ctx: Context<InitializeAccount>) -> Result<()> {
+    pub fn initialize_account(_ctx: Context<InitializeAccount>) -> Result<()> {
         Ok(())
     }
 
-    pub fn initialize_mint(ctx: Context<InitializeMint>) -> Result<()> {
+    pub fn initialize_mint(_ctx: Context<InitializeMint>) -> Result<()> {
         Ok(())
     }
 

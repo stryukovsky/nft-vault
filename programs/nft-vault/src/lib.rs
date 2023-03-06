@@ -16,14 +16,7 @@ pub mod nft_vault {
     }
 
     pub fn mint_nft(ctx: Context<MintNft>, token_id: u64) -> Result<()> {
-        let token_program = ctx.accounts.token_program.to_account_info();
-        let accounts = MintTo {
-            mint: ctx.accounts.mint.to_account_info(),
-            to: ctx.accounts.token_account.to_account_info(),
-            authority: ctx.accounts.payer.to_account_info(),
-        };
-        let context = CpiContext::new(token_program, accounts);
-        mint_to(context, token_id)
+        mint_to(ctx.accounts.build_context(), token_id)
     }
 }
 
@@ -71,4 +64,16 @@ pub struct InitializeMint<'info> {
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub rent: Sysvar<'info, Rent>,
+}
+
+impl<'info> MintNft<'info> {
+    pub fn build_context(&self) -> CpiContext<'_, '_, '_, 'info, MintTo<'info>> {
+        let token_program = self.token_program.to_account_info();
+        let accounts = MintTo{
+            mint: self.mint.to_account_info(),
+            to: self.token_account.to_account_info(),
+            authority: self.payer.to_account_info(),
+        };
+        CpiContext::new(token_program, accounts)
+    }
 }
